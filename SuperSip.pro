@@ -18,9 +18,11 @@ TEMPLATE = app
 SOURCES += main.cpp \
     networkreaderthread.cpp \
     networkreader.cpp \
-    sipparser.cpp
+    sipparser.cpp \
+    callinputter.cpp
 
 HEADERS += \
     networkreaderthread.h \
     networkreader.h \
-    sipparser.h
+    sipparser.h \
+    callinputter.h

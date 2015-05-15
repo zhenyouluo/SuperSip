@@ -1,2 +1,2 @@
 # SuperSip
-Sip server, with a thread per call 3
+Sip server, with a thread per call

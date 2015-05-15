@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <QThread>
 #include <QUdpSocket>
 #include "networkreader.h"
 #include "sipparser.h"
@@ -18,6 +19,19 @@ NetworkReader::NetworkReader()
   }
   connect(udpSocket, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()));
   qDebug() << "connected";
+  nrOfCallHandlingThreads = 1;
+  int idealThreadCount = QThread::idealThreadCount();
+  if (idealThreadCount > 3)
+  {
+    nrOfCallHandlingThreads = idealThreadCount - 2;
+  }
+  callHandlingThreads = new QThread*[nrOfCallHandlingThreads];
+  for (int i=0; i < nrOfCallHandlingThreads; i++)
+  {
+    callHandlingThreads[i] = new QThread();
+    callHandlingThreads[i]->start();
+  }
+  threadChoser = 0;
 }
 
 void NetworkReader::readPendingDatagrams()
@@ -35,8 +49,8 @@ void NetworkReader::readPendingDatagrams()
 
     QString callId = SipParser::getCallId(datagram);
 
-    // check if this is known call, if so forward the data to the rigth thread,
-    // otherwise start new thread
+    // check if this is known call, if so forward the data to the rigth object,
+    // otherwise create a new object
     if (calls.contains(callId))
     {
       calls.value(callId)->forwardCallData(datagram);
@@ -48,6 +62,8 @@ void NetworkReader::readPendingDatagrams()
       CallHandler* handler = new CallHandler();
       QObject::connect(inputter, &CallInputter::sendCallData, handler, &CallHandler::processCallData);
       inputter->forwardCallData(datagram);
+      handler->moveToThread(callHandlingThreads[threadChoser]);
+      threadChoser = (threadChoser + 1) % nrOfCallHandlingThreads;
     }
   }
 }

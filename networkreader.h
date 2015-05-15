@@ -16,6 +16,9 @@ public:
 private:
   QUdpSocket* udpSocket;
   QHash<QString, CallInputter*> calls;
+  int nrOfCallHandlingThreads;
+  QThread** callHandlingThreads;
+  int threadChoser;
 
 signals:
 

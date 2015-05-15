@@ -19,10 +19,12 @@ SOURCES += main.cpp \
     networkreaderthread.cpp \
     networkreader.cpp \
     sipparser.cpp \
-    callinputter.cpp
+    callinputter.cpp \
+    callhandler.cpp
 
 HEADERS += \
     networkreaderthread.h \
     networkreader.h \
     sipparser.h \
-    callinputter.h
+    callinputter.h \
+    callhandler.h

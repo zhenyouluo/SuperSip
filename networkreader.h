@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QUdpSocket>
 
+#include "callinputter.h"
+
 class NetworkReader : public QObject
 {
   Q_OBJECT
@@ -13,7 +15,7 @@ public:
 
 private:
   QUdpSocket* udpSocket;
-
+  QHash<QString, CallInputter*> calls;
 
 signals:
 

@@ -2,6 +2,8 @@
 #include <QUdpSocket>
 #include "networkreader.h"
 #include "sipparser.h"
+#include "callinputter.h"
+#include "callhandler.h"
 
 NetworkReader::NetworkReader()
 {
@@ -31,7 +33,22 @@ void NetworkReader::readPendingDatagrams()
     udpSocket->readDatagram(datagram.data(), datagram.size(),
                             &sender, &senderPort);
 
-    qDebug() << SipParser::getCallId(datagram);
+    QString callId = SipParser::getCallId(datagram);
+
+    // check if this is known call, if so forward the data to the rigth thread,
+    // otherwise start new thread
+    if (calls.contains(callId))
+    {
+      calls.value(callId)->forwardCallData(datagram);
+    }
+    else
+    {
+      CallInputter* inputter = new CallInputter();
+      calls.insert(callId, inputter);
+      CallHandler* handler = new CallHandler();
+      QObject::connect(inputter, &CallInputter::sendCallData, handler, &CallHandler::processCallData);
+      inputter->forwardCallData(datagram);
+    }
   }
 }
 

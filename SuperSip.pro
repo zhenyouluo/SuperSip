@@ -20,11 +20,13 @@ SOURCES += main.cpp \
     networkreader.cpp \
     sipparser.cpp \
     callinputter.cpp \
-    callhandler.cpp
+    callhandler.cpp \
+    sipmessage.cpp
 
 HEADERS += \
     networkreaderthread.h \
     networkreader.h \
     sipparser.h \
     callinputter.h \
-    callhandler.h
+    callhandler.h \
+    sipmessage.h

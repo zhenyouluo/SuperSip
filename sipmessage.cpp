@@ -29,3 +29,8 @@ void SipMessage::setReasonPhrase(QString reasonphrase)
 {
   reasonPhrase = reasonphrase;
 }
+
+void SipMessage::setSipMethod(QString sipmethod)
+{
+  sipMethod = sipmethod;
+}

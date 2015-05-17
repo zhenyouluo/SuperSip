@@ -50,19 +50,26 @@ SipMessage* SipParser::parse(QByteArray sipheader)
     sipmessage->setIsRequest(false);
 
     // Parse response startline, must be: SIP-Version SP Status-Code SP Reason-Phrase
-    QStringList startlineparts = startline.split(" ");
 
-    // allow to omit Reason-Phrase?
-    if (startlineparts.size() < 2)
+    int firstspacepos = startline.indexOf(" ");
+    if (firstspacepos < 1)
     {
       return NULL;
     }
-    sipmessage->setSipVersion(startlineparts[0]);
-    sipmessage->setStatusCode(startlineparts[1]);
-    if (startlineparts.size() > 2)
+    sipmessage->setSipVersion(startline.left(firstspacepos));
+    int secondspacepos = startline.indexOf(" ", firstspacepos+1);
+    if (secondspacepos < firstspacepos+2)
     {
-      sipmessage->setReasonPhrase(startlineparts[2].trimmed());
+      return NULL;
     }
+    sipmessage->setStatusCode(startline.mid(firstspacepos+1, secondspacepos-(firstspacepos+1)));
+
+    QString reason = startline.mid(secondspacepos+1).trimmed();
+    if (reason.isNull() || reason.isEmpty())
+    {
+      return NULL;
+    }
+    sipmessage->setReasonPhrase(reason);
   }
   else
   {
@@ -83,7 +90,9 @@ SipMessage* SipParser::parse(QByteArray sipheader)
     {
       return NULL;
     }
-    qDebug() << startlineparts[0];
+    sipmessage->setSipMethod(startlineparts[0]);
+
+
     sipmessage->setSipVersion(startlineparts[2]);
 
   }

@@ -16,6 +16,7 @@ public:
   void setSipVersion(QString);
   void setStatusCode(QString);
   void setReasonPhrase(QString);
+  void setSipMethod(QString);
 
 private:
   QHash<QString, QStringList> fields;
@@ -24,6 +25,7 @@ private:
   QString sipVersion;
   QString statusCode;
   QString reasonPhrase;
+  QString sipMethod;
 
 signals:
 

@@ -1,4 +1,5 @@
 #include "sipmessage.h"
+#include "sipuri.h"
 
 SipMessage::SipMessage()
 {
@@ -33,4 +34,9 @@ void SipMessage::setReasonPhrase(QString reasonphrase)
 void SipMessage::setSipMethod(QString sipmethod)
 {
   sipMethod = sipmethod;
+}
+
+void SipMessage::setSipURI(SipURI* sipuri)
+{
+  sipURI = sipuri;
 }

@@ -5,6 +5,7 @@
 #include <QString>
 #include <QSet>
 #include "sipmessage.h"
+#include "sipuri.h"
 
 class SipParser : public QObject
 {
@@ -14,6 +15,7 @@ public:
   static QString getCallId(QByteArray);
   static SipMessage* parse(QByteArray);
   static QSet<QString> sipMethods;
+  static SipURI* parseSipURI(QString);
 
 signals:
 

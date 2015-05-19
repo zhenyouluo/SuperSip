@@ -2,13 +2,36 @@
 #include <QString>
 #include <QSet>
 #include <QDebug>
+#include <QRegExp>
 #include "sipparser.h"
+#include "sipuri.h"
 #include "sipmessage.h"
 #include "sipdefinitions.h"
 
 SipParser::SipParser(QObject *parent) : QObject(parent)
 {
 
+}
+
+SipURI* SipParser::parseSipURI(QString uritext)
+{
+  SipURI* sipuri = new SipURI();
+
+  // use regexp
+  QRegExp rx("^(?:([^:/?#]+):)?(?://([^/?#]*))?([^?#]*)(?:\\?([^#]*))?(?:#(.*))?");
+
+  rx.indexIn(uritext);
+  if (rx.matchedLength() != uritext.size())
+  {
+    return NULL;
+  }
+  QStringList list = rx.capturedTexts();
+    for (int i=1; i < list.size(); i++)
+    {
+      qDebug() << list[i];
+    }
+
+  return sipuri;
 }
 
 QString SipParser::getCallId(QByteArray sipheader)
@@ -29,10 +52,10 @@ QString SipParser::getCallId(QByteArray sipheader)
   return NULL;
 }
 
-SipMessage* SipParser::parse(QByteArray sipheader)
+SipMessage* SipParser::parse(QByteArray sipdata)
 {
   SipMessage* sipmessage = new SipMessage();
-  QString message = QString::fromUtf8(sipheader.data());
+  QString message = QString::fromUtf8(sipdata.data());
   QStringList messagelines = message.split("\n");
 
   // discard messages that do not at least contain a startline and a CRLF line between header and body
@@ -88,10 +111,18 @@ SipMessage* SipParser::parse(QByteArray sipheader)
     // check if sip method can be recognized
     if (!SipDefinitions::sipMethods.contains(startlineparts[0]))
     {
+      qDebug() << "method not recognized";
       return NULL;
     }
-    sipmessage->setSipMethod(startlineparts[0]);
 
+    // Parse sip URI
+    qDebug() << "parse uri";
+    SipURI* sipuri = parseSipURI(startlineparts[1]);
+    if (!sipuri)
+    {
+      return NULL;
+    }
+    sipmessage->setSipURI(sipuri);
 
     sipmessage->setSipVersion(startlineparts[2]);
 

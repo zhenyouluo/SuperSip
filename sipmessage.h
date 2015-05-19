@@ -6,6 +6,8 @@
 #include <QString>
 #include <QStringList>
 
+#include "sipuri.h"
+
 class SipMessage : public QObject
 {
   Q_OBJECT
@@ -17,6 +19,7 @@ public:
   void setStatusCode(QString);
   void setReasonPhrase(QString);
   void setSipMethod(QString);
+  void setSipURI(SipURI*);
 
 private:
   QHash<QString, QStringList> fields;
@@ -26,6 +29,7 @@ private:
   QString statusCode;
   QString reasonPhrase;
   QString sipMethod;
+  SipURI *sipURI;
 
 signals:
 

@@ -22,7 +22,8 @@ SOURCES += main.cpp \
     callinputter.cpp \
     callhandler.cpp \
     sipmessage.cpp \
-    sipdefinitions.cpp
+    sipdefinitions.cpp \
+    sipuri.cpp
 
 HEADERS += \
     networkreaderthread.h \
@@ -31,4 +32,5 @@ HEADERS += \
     callinputter.h \
     callhandler.h \
     sipmessage.h \
-    sipdefinitions.h
+    sipdefinitions.h \
+    sipuri.h

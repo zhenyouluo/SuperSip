@@ -12,7 +12,7 @@ class SipMessage : public QObject
 {
   Q_OBJECT
 public:
-  explicit SipMessage();
+  explicit SipMessage(QObject *parent = 0);
   bool addField(QString, QString);
   void setIsRequest(bool);
   void setSipVersion(QString);
@@ -20,6 +20,10 @@ public:
   void setReasonPhrase(QString);
   void setSipMethod(QString);
   void setSipURI(SipURI*);
+  QString toString();
+
+  bool getIsRequest();
+  QString getSipMethod();
 
 private:
   QHash<QString, QStringList> fields;

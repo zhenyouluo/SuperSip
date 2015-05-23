@@ -9,6 +9,27 @@ class SipURI : public QObject
 public:
   explicit SipURI(QObject *parent = 0);
 
+private:
+  QString uriText;
+  QString uriScheme;
+  QString uriUserinfo;
+  QString uriHost;
+  QString uriPort;
+  QString uriPath;
+  QString uriQuery;
+  QString uriFragment;
+
+public:
+  void setUriText(QString);
+  void setUriScheme(QString);
+  void setUriUserinfo(QString);
+  void setUriHost(QString);
+  void setUriPort(QString);
+  void setUriPath(QString);
+  void setUriQuery(QString);
+  void setUriFragment(QString);
+  QString toString();
+
 signals:
 
 public slots:

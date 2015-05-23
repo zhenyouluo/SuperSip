@@ -13,9 +13,9 @@ class SipParser : public QObject
 public:
   explicit SipParser(QObject *parent = 0);
   static QString getCallId(QByteArray);
-  static SipMessage* parse(QByteArray);
+  static int parse(QByteArray, SipMessage*);
   static QSet<QString> sipMethods;
-  static SipURI* parseSipURI(QString);
+  static int parseSipURI(QString, SipURI*);
 
 signals:
 

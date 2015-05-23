@@ -1,7 +1,7 @@
 #include "sipmessage.h"
 #include "sipuri.h"
 
-SipMessage::SipMessage()
+SipMessage::SipMessage(QObject *parent) : QObject(parent)
 {
 
 }
@@ -39,4 +39,19 @@ void SipMessage::setSipMethod(QString sipmethod)
 void SipMessage::setSipURI(SipURI* sipuri)
 {
   sipURI = sipuri;
+}
+
+bool SipMessage::getIsRequest()
+{
+  return isRequest;
+}
+
+QString SipMessage::getSipMethod()
+{
+  return sipMethod;
+}
+
+QString SipMessage::toString()
+{
+  return sipVersion+statusCode+"uri: "+sipURI->toString();
 }

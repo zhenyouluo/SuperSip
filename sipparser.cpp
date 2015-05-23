@@ -13,25 +13,81 @@ SipParser::SipParser(QObject *parent) : QObject(parent)
 
 }
 
-SipURI* SipParser::parseSipURI(QString uritext)
+int SipParser::parseSipURI(QString uritext, SipURI* sipuri)
 {
-  SipURI* sipuri = new SipURI();
-
-  // use regexp
-  QRegExp rx("^(?:([^:/?#]+):)?(?://([^/?#]*))?([^?#]*)(?:\\?([^#]*))?(?:#(.*))?");
-
-  rx.indexIn(uritext);
-  if (rx.matchedLength() != uritext.size())
+  // use regex
+  QRegExp rx("^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?");
+  if (rx.indexIn("http://user@www.ics.uci.edu:9001/pub/ietf/uri/#Related") == -1)
   {
-    return NULL;
+    return 1;
   }
   QStringList list = rx.capturedTexts();
-    for (int i=1; i < list.size(); i++)
-    {
-      qDebug() << list[i];
-    }
+  if (list.size() < 10)
+  {
+    return 2;
+  }
+  sipuri->setUriText(uritext);
+  if (list[2] == "")
+  {
+    return 3;
+  }
+  else
+  {
+    sipuri->setUriScheme(list[2]);
+  }
+  QString server;
 
-  return sipuri;
+  if (list[3].startsWith("//"))
+  {
+    // absolute url
+    server = list[4];
+    sipuri->setUriPath(list[5]);
+  }
+  else
+  {
+    // opaque: list[5] contains host and possibly path
+    int pathpos = list[5].indexOf('/');
+    if (pathpos < 0)
+    {
+      server = list[5];
+    }
+    else
+    {
+      if (pathpos < 1)
+      {
+        // no host
+        return 4;
+      }
+      server = list[5].left(pathpos);
+      sipuri->setUriPath(list[5].mid(pathpos));
+    }
+  }
+  QString hostport;
+  int atpos = server.indexOf('@');
+  if (atpos < 0)
+  {
+    // no user info in server
+    hostport = server;
+  }
+  else
+  {
+    sipuri->setUriUserinfo(server.left(atpos));
+    hostport = server.mid(atpos+1);
+  }
+  int portpos = hostport.indexOf(':');
+  if (portpos < 0)
+  {
+    sipuri->setUriHost(hostport);
+  }
+  else
+  {
+    sipuri->setUriHost(hostport.left(portpos));
+    sipuri->setUriPort(hostport.mid(portpos+1));
+  }
+  sipuri->setUriQuery(list[7]);
+  sipuri->setUriFragment(list[9]);
+
+  return 0;
 }
 
 QString SipParser::getCallId(QByteArray sipheader)
@@ -40,6 +96,7 @@ QString SipParser::getCallId(QByteArray sipheader)
   QStringList messagelines = message.split("\n");
   for (int i = 0; i < messagelines.size(); ++i)
   {
+    // TODO call id on multiple lines?
     if (messagelines[i].startsWith("Call-ID", Qt::CaseInsensitive))
     {
       QStringList lineparts = messagelines[i].split(":");
@@ -52,16 +109,15 @@ QString SipParser::getCallId(QByteArray sipheader)
   return NULL;
 }
 
-SipMessage* SipParser::parse(QByteArray sipdata)
+int SipParser::parse(QByteArray sipdata, SipMessage* sipmessage)
 {
-  SipMessage* sipmessage = new SipMessage();
   QString message = QString::fromUtf8(sipdata.data());
   QStringList messagelines = message.split("\n");
 
   // discard messages that do not at least contain a startline and a CRLF line between header and body
   if (messagelines.size() < 2)
   {
-    return NULL;
+    return 1;
   }
 
   QString startline = messagelines[0];
@@ -77,20 +133,20 @@ SipMessage* SipParser::parse(QByteArray sipdata)
     int firstspacepos = startline.indexOf(" ");
     if (firstspacepos < 1)
     {
-      return NULL;
+      return 2;
     }
     sipmessage->setSipVersion(startline.left(firstspacepos));
     int secondspacepos = startline.indexOf(" ", firstspacepos+1);
     if (secondspacepos < firstspacepos+2)
     {
-      return NULL;
+      return 3;
     }
     sipmessage->setStatusCode(startline.mid(firstspacepos+1, secondspacepos-(firstspacepos+1)));
 
     QString reason = startline.mid(secondspacepos+1).trimmed();
     if (reason.isNull() || reason.isEmpty())
     {
-      return NULL;
+      return 4;
     }
     sipmessage->setReasonPhrase(reason);
   }
@@ -105,22 +161,25 @@ SipMessage* SipParser::parse(QByteArray sipdata)
     // all parts available?
     if (startlineparts.size() < 3)
     {
-      return NULL;
+      return 5;
     }
 
     // check if sip method can be recognized
     if (!SipDefinitions::sipMethods.contains(startlineparts[0]))
     {
       qDebug() << "method not recognized";
-      return NULL;
+      return 6;
     }
+
+    sipmessage->setSipMethod(startlineparts[0]);
 
     // Parse sip URI
     qDebug() << "parse uri";
-    SipURI* sipuri = parseSipURI(startlineparts[1]);
-    if (!sipuri)
+    SipURI* sipuri = new SipURI(sipmessage);
+    int result = parseSipURI(startlineparts[1], sipuri);
+    if (result != 0)
     {
-      return NULL;
+      return 7;
     }
     sipmessage->setSipURI(sipuri);
 
@@ -147,6 +206,6 @@ SipMessage* SipParser::parse(QByteArray sipdata)
       }
     }
   }
-  return sipmessage;
+  return 0;
 }
 

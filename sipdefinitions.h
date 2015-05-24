@@ -11,7 +11,7 @@ private:
 public:
   SipDefinitions();
   static const QStringList sipMethods;
-
+  static const QStringList sipFieldnames;
 
 };
 

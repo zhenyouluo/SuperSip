@@ -7,6 +7,7 @@
 #include "sipuri.h"
 #include "sipmessage.h"
 #include "sipdefinitions.h"
+#include "headerlineparser_to.h"
 
 SipParser::SipParser(QObject *parent) : QObject(parent)
 {
@@ -187,25 +188,110 @@ int SipParser::parse(QByteArray sipdata, SipMessage* sipmessage)
 
   }
 
-
-
-  for (int i = 0; i < messagelines.size(); ++i)
+  // get all header lines and concat the lines that were on multiple lines
+  int i = 1;
+  bool header_end = false;
+  QStringList headerlines;
+  while (i < messagelines.size() && !header_end)
   {
-    int colonpos = messagelines[i].indexOf(':');
+    if (messagelines[i].size() == 0 || messagelines[i] == "\r")
+    {
+      header_end = true;
+    }
+    else
+    {
+      // is this a contination line?
+      if (messagelines[i].left(1) == " " || messagelines[i].left(1) == "\t")
+      {
+        // add to previous header line
+        if (headerlines.count() > 0)
+        {
+          headerlines[headerlines.count()-1].append(" ").append(messagelines[i].trimmed());
+        }
+        else
+        {
+          // first line can not be contination line
+        }
+      }
+      else
+      {
+        // new header line
+        headerlines << messagelines[i];
+      }
+    }
+    i++;
+  }
+
+  if (parseHeader(headerlines, sipmessage) < 0)
+  {
+    return 8;
+  }
+
+  if (i < messagelines.size())
+  {
+    // get body: find empty line
+    int emptylinepos = message.indexOf("\r\n\r\n");
+    int bodypos;
+    if (emptylinepos < 0)
+    {
+      int emptylinepos = message.indexOf("\n\n");
+      if (emptylinepos < 0)
+      {
+        return 9;
+      }
+      else
+      {
+        bodypos = emptylinepos+2;
+      }
+    }
+    else
+    {
+      bodypos = emptylinepos+4;
+    }
+    sipmessage->setSipBody(message.mid(bodypos));
+  }
+
+
+  return 0;
+}
+
+int SipParser::parseHeader(QStringList sipheader, SipMessage* sipmessage)
+{
+  for (int i = 0; i < sipheader.size(); i++)
+  {
+    int colonpos = sipheader[i].indexOf(':');
     if (colonpos > 0)
     {
-      // QString fieldname = messagelines[i].left(colonpos).trimmed();
-      // QString values = messagelines[i].midRef(colonpos+1).trimmed();
-    }
-    if (messagelines[i].startsWith("Call-ID", Qt::CaseInsensitive))
-    {
-      QStringList lineparts = messagelines[i].split(":");
-      if (lineparts.size() > 1)
-      {
-       //return lineparts[1].trimmed();
-      }
+      QString fieldname = sipheader[i].left(colonpos).trimmed();
+      QString fieldvalues = sipheader[i].mid(colonpos+1).trimmed();
+      getHeaderlineparser(fieldname)->parse(fieldvalues, sipmessage);
     }
   }
   return 0;
 }
 
+void SipParser::initHeaderlineparsers()
+{
+  headerlineparsers.insert("To", new HeaderLineParser_To());
+}
+
+HeaderLineParser* SipParser::getHeaderlineparser(QString field)
+{
+  if (headerlineparsers.isEmpty())
+  {
+    initHeaderlineparsers();
+  }
+  HeaderLineParser* parser = headerlineparsers.value(field);
+  if (parser != NULL)
+  {
+    qDebug() << "parser not null";
+    return headerlineparsers.value(field);
+  }
+  else
+  {
+    qDebug() << "parser null";
+    return new HeaderLineParser();
+  }
+}
+
+QHash<QString, HeaderLineParser*> SipParser::headerlineparsers;

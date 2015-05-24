@@ -19,6 +19,7 @@ public:
   void setStatusCode(QString);
   void setReasonPhrase(QString);
   void setSipMethod(QString);
+  void setSipBody(QString);
   void setSipURI(SipURI*);
   QString toString();
 
@@ -34,6 +35,7 @@ private:
   QString reasonPhrase;
   QString sipMethod;
   SipURI *sipURI;
+  QString sipBody;
 
 signals:
 

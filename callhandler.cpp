@@ -15,7 +15,7 @@ void CallHandler::processCallData(QByteArray callData)
   SipMessage* sipmessage = new SipMessage(this);
   if (SipParser::parse(callData, sipmessage) == 0)
   {
-    qDebug() << sipmessage->toString();
+    qDebug() << callData;
     if (sipmessage->getIsRequest())
     {
       switch(SipDefinitions::sipMethods.indexOf(sipmessage->getSipMethod()))

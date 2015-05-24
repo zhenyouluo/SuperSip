@@ -21,6 +21,11 @@ void SipMessage::setSipVersion(QString sipversion)
   sipVersion = sipversion;
 }
 
+void SipMessage::setSipBody(QString sipbody)
+{
+  sipBody = sipbody;
+}
+
 void SipMessage::setStatusCode(QString statuscode)
 {
   statusCode = statuscode;

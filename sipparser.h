@@ -24,6 +24,8 @@ public:
   static int parseSipURI(QString, SipURI*);
   static int parseHeader(QStringList, SipMessage*);
   static HeaderLineParser* getHeaderlineparser(QString);
+  static void splitBy(QString, QChar, QStringList*);
+  static int findLWS(QString);
 
 signals:
 

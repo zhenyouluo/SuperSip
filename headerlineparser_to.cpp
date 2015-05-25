@@ -5,7 +5,7 @@
 
 HeaderLineParser_To::HeaderLineParser_To()
 {
-
+  parse("test", NULL);
 }
 
 int HeaderLineParser_To::parse(QString fieldvalues, SipMessage* sipmessage)

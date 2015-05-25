@@ -25,7 +25,9 @@ SOURCES += main.cpp \
     sipdefinitions.cpp \
     sipuri.cpp \
     headerlineparser.cpp \
-    headerlineparser_to.cpp
+    headerlineparser_to.cpp \
+    headerlineparser_via.cpp \
+    sipvia.cpp
 
 HEADERS += \
     networkreaderthread.h \
@@ -37,4 +39,6 @@ HEADERS += \
     sipdefinitions.h \
     sipuri.h \
     headerlineparser.h \
-    headerlineparser_to.h
+    headerlineparser_to.h \
+    headerlineparser_via.h \
+    sipvia.h

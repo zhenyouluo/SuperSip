@@ -8,17 +8,95 @@
 #include "sipmessage.h"
 #include "sipdefinitions.h"
 #include "headerlineparser_to.h"
+#include "headerlineparser_via.h"
 
 SipParser::SipParser(QObject *parent) : QObject(parent)
 {
 
 }
 
+// split by a delimitter character, except when character between unescaped double quotes
+void SipParser::splitBy(QString inputline, QChar delimitter, QStringList* outputlist)
+{
+  bool inside_quotes = false;
+  bool prev_is_backslash = false;
+  int start_of_strpart = 0;
+
+  for (int i=0; i < inputline.size(); i++)
+  {
+    QString curr_char = inputline.mid(i, 1);
+
+    // Process current character
+    if (inside_quotes)
+    {
+      // check for closing quote
+      if (curr_char == "\"")
+      {
+        if (!prev_is_backslash)
+        {
+          inside_quotes = false;
+        }
+      }
+      else
+      {
+        // Set variables for next iteration
+        if (curr_char == "\\")
+        {
+          if (prev_is_backslash)
+          {
+            prev_is_backslash = false;
+          }
+          else
+          {
+            prev_is_backslash = true;
+          }
+        }
+        else
+        {
+          prev_is_backslash = false;
+        }
+      }
+    }
+    else
+    {
+      if (curr_char == QString(delimitter))
+      {
+        outputlist->append(inputline.mid(start_of_strpart, i-start_of_strpart));
+        start_of_strpart = i+1;
+      }
+      if (curr_char == "\"")
+      {
+        // found opening double quote
+        inside_quotes = true;
+        prev_is_backslash = false;
+      }
+    }
+    qDebug() << inputline.left(i+1) << inside_quotes << prev_is_backslash;
+  }
+  // add leftover
+  outputlist->append(inputline.mid(start_of_strpart));
+}
+
+int SipParser::findLWS(QString strToSearch)
+{
+  for (int i=0; i < strToSearch.size(); i++)
+  {
+    QString curr_char = strToSearch.mid(i, 1);
+
+    if ((curr_char == " ") || (curr_char == "\t"))
+    {
+      return i;
+    }
+  }
+  return -1;
+}
+
+
 int SipParser::parseSipURI(QString uritext, SipURI* sipuri)
 {
   // use regex
   QRegExp rx("^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?");
-  if (rx.indexIn("http://user@www.ics.uci.edu:9001/pub/ietf/uri/#Related") == -1)
+  if (rx.indexIn(uritext) == -1)
   {
     return 1;
   }
@@ -259,11 +337,13 @@ int SipParser::parseHeader(QStringList sipheader, SipMessage* sipmessage)
 {
   for (int i = 0; i < sipheader.size(); i++)
   {
+
     int colonpos = sipheader[i].indexOf(':');
     if (colonpos > 0)
     {
-      QString fieldname = sipheader[i].left(colonpos).trimmed();
+      QString fieldname = sipheader[i].left(colonpos).trimmed().toLower();
       QString fieldvalues = sipheader[i].mid(colonpos+1).trimmed();
+      qDebug() << "fv:" << fieldvalues;
       getHeaderlineparser(fieldname)->parse(fieldvalues, sipmessage);
     }
   }
@@ -272,7 +352,12 @@ int SipParser::parseHeader(QStringList sipheader, SipMessage* sipmessage)
 
 void SipParser::initHeaderlineparsers()
 {
-  headerlineparsers.insert("To", new HeaderLineParser_To());
+  headerlineparsers.insert("via", new HeaderLineParser_Via());
+  headerlineparsers.insert("v", new HeaderLineParser_Via());
+
+
+
+  headerlineparsers.insert("to", new HeaderLineParser_To());
 }
 
 HeaderLineParser* SipParser::getHeaderlineparser(QString field)
@@ -290,6 +375,7 @@ HeaderLineParser* SipParser::getHeaderlineparser(QString field)
   else
   {
     qDebug() << "parser null";
+    // TODO parser for non-defined fields
     return new HeaderLineParser();
   }
 }

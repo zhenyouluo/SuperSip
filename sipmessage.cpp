@@ -60,3 +60,8 @@ QString SipMessage::toString()
 {
   return sipVersion+statusCode+"uri: "+sipURI->toString();
 }
+
+void SipMessage::addVia(SipVia* sipvia)
+{
+  sipVias.append(sipvia);
+}

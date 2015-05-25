@@ -7,6 +7,7 @@
 #include <QStringList>
 
 #include "sipuri.h"
+#include "sipvia.h"
 
 class SipMessage : public QObject
 {
@@ -22,6 +23,7 @@ public:
   void setSipBody(QString);
   void setSipURI(SipURI*);
   QString toString();
+  void addVia(SipVia*);
 
   bool getIsRequest();
   QString getSipMethod();
@@ -36,6 +38,7 @@ private:
   QString sipMethod;
   SipURI *sipURI;
   QString sipBody;
+  QList<SipVia*> sipVias;
 
 signals:
 

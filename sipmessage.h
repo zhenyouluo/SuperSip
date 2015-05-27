@@ -21,6 +21,7 @@ public:
   void setReasonPhrase(QString);
   void setSipMethod(QString);
   void setSipBody(QString);
+  void setSipCallId(QString);
   void setSipURI(SipURI*);
   QString toString();
   void addVia(SipVia*);
@@ -39,6 +40,7 @@ private:
   SipURI *sipURI;
   QString sipBody;
   QList<SipVia*> sipVias;
+  QString sipCallId;
 
 signals:
 

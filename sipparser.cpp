@@ -8,6 +8,7 @@
 #include "sipmessage.h"
 #include "sipdefinitions.h"
 #include "headerlineparser_to.h"
+#include "headerlineparser_call_id.h"
 #include "headerlineparser_via.h"
 
 SipParser::SipParser(QObject *parent) : QObject(parent)
@@ -75,6 +76,66 @@ void SipParser::splitBy(QString inputline, QChar delimitter, QStringList* output
   }
   // add leftover
   outputlist->append(inputline.mid(start_of_strpart));
+}
+
+// find the first position of a delimitter character, except when character between unescaped double quotes
+int SipParser::findFirstLiteral(QString inputline, QChar delimitter)
+{
+  bool inside_quotes = false;
+  bool prev_is_backslash = false;
+
+  for (int i=0; i < inputline.size(); i++)
+  {
+    QString curr_char = inputline.mid(i, 1);
+
+    // Process current character
+    if (inside_quotes)
+    {
+      // check for closing quote
+      if (curr_char == "\"")
+      {
+        if (!prev_is_backslash)
+        {
+          inside_quotes = false;
+        }
+      }
+      else
+      {
+        // Set variables for next iteration
+        if (curr_char == "\\")
+        {
+          if (prev_is_backslash)
+          {
+            prev_is_backslash = false;
+          }
+          else
+          {
+            prev_is_backslash = true;
+          }
+        }
+        else
+        {
+          prev_is_backslash = false;
+        }
+      }
+    }
+    else
+    {
+      if (curr_char == QString(delimitter))
+      {
+        return i;
+      }
+      if (curr_char == "\"")
+      {
+        // found opening double quote
+        inside_quotes = true;
+        prev_is_backslash = false;
+      }
+    }
+
+  }
+
+  return -1;
 }
 
 int SipParser::findLWS(QString strToSearch)
@@ -176,7 +237,10 @@ QString SipParser::getCallId(QByteArray sipheader)
   for (int i = 0; i < messagelines.size(); ++i)
   {
     // TODO call id on multiple lines?
-    if (messagelines[i].startsWith("Call-ID", Qt::CaseInsensitive))
+    if (messagelines[i].startsWith("Call-ID", Qt::CaseInsensitive) ||
+        messagelines[i].startsWith("i ", Qt::CaseInsensitive) ||
+        messagelines[i].startsWith("i\t", Qt::CaseInsensitive) ||
+        messagelines[i].startsWith("i:", Qt::CaseInsensitive))
     {
       QStringList lineparts = messagelines[i].split(":");
       if (lineparts.size() > 1)
@@ -352,6 +416,8 @@ int SipParser::parseHeader(QStringList sipheader, SipMessage* sipmessage)
 
 void SipParser::initHeaderlineparsers()
 {
+  headerlineparsers.insert("Call-ID", new HeaderLineParser_Call_Id());
+  headerlineparsers.insert("i", new HeaderLineParser_Call_Id());
   headerlineparsers.insert("via", new HeaderLineParser_Via());
   headerlineparsers.insert("v", new HeaderLineParser_Via());
 

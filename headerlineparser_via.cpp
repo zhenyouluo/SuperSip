@@ -70,4 +70,5 @@ int HeaderLineParser_Via::parse(QString fieldvalues, SipMessage* sipmessage)
     }
     sipmessage->addVia(sipvia);
   }
+  return 0;
 }

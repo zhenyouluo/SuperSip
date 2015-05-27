@@ -26,6 +26,11 @@ void SipMessage::setSipBody(QString sipbody)
   sipBody = sipbody;
 }
 
+void SipMessage::setSipCallId(QString callid)
+{
+  sipCallId = callid;
+}
+
 void SipMessage::setStatusCode(QString statuscode)
 {
   statusCode = statuscode;

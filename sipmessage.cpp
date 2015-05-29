@@ -70,3 +70,33 @@ void SipMessage::addVia(SipVia* sipvia)
 {
   sipVias.append(sipvia);
 }
+
+void SipMessage::setSipFromUri(SipURI* uri)
+{
+  fromURI = uri;
+}
+
+void SipMessage::setSipFromDisplayname(QString display)
+{
+  fromDisplayname = display;
+}
+
+void SipMessage::addFromParams(QString name, QString value)
+{
+  fromParameters.insert(name, value);
+}
+
+void SipMessage::setSipToUri(SipURI* uri)
+{
+  toURI = uri;
+}
+
+void SipMessage::setSipToDisplayname(QString display)
+{
+  toDisplayname = display;
+}
+
+void SipMessage::addToParams(QString name, QString value)
+{
+  toParameters.insert(name, value);
+}

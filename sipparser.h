@@ -25,7 +25,7 @@ public:
   static int parseHeader(QStringList, SipMessage*);
   static HeaderLineParser* getHeaderlineparser(QString);
   static void splitBy(QString, QChar, QStringList*);
-  int findFirstLiteral(QString, QChar);
+  static int findFirstLiteral(QString, QChar);
   static int findLWS(QString);
 
 signals:

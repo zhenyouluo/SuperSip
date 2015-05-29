@@ -9,6 +9,7 @@
 #include "sipdefinitions.h"
 #include "headerlineparser_to.h"
 #include "headerlineparser_call_id.h"
+#include "headerlineparser_from.h"
 #include "headerlineparser_via.h"
 
 SipParser::SipParser(QObject *parent) : QObject(parent)
@@ -72,7 +73,7 @@ void SipParser::splitBy(QString inputline, QChar delimitter, QStringList* output
         prev_is_backslash = false;
       }
     }
-    qDebug() << inputline.left(i+1) << inside_quotes << prev_is_backslash;
+    // qDebug() << inputline.left(i+1) << inside_quotes << prev_is_backslash;
   }
   // add leftover
   outputlist->append(inputline.mid(start_of_strpart));
@@ -405,9 +406,9 @@ int SipParser::parseHeader(QStringList sipheader, SipMessage* sipmessage)
     int colonpos = sipheader[i].indexOf(':');
     if (colonpos > 0)
     {
-      QString fieldname = sipheader[i].left(colonpos).trimmed().toLower();
+      QString fieldname = sipheader[i].left(colonpos).trimmed();
       QString fieldvalues = sipheader[i].mid(colonpos+1).trimmed();
-      qDebug() << "fv:" << fieldvalues;
+      qDebug() << fieldname << "fv:" << fieldvalues;
       getHeaderlineparser(fieldname)->parse(fieldvalues, sipmessage);
     }
   }
@@ -416,11 +417,12 @@ int SipParser::parseHeader(QStringList sipheader, SipMessage* sipmessage)
 
 void SipParser::initHeaderlineparsers()
 {
-  headerlineparsers.insert("Call-ID", new HeaderLineParser_Call_Id());
+  headerlineparsers.insert("call-id", new HeaderLineParser_Call_Id());
   headerlineparsers.insert("i", new HeaderLineParser_Call_Id());
   headerlineparsers.insert("via", new HeaderLineParser_Via());
   headerlineparsers.insert("v", new HeaderLineParser_Via());
-
+  headerlineparsers.insert("from", new HeaderLineParser_From());
+  headerlineparsers.insert("f", new HeaderLineParser_From());
 
 
   headerlineparsers.insert("to", new HeaderLineParser_To());
@@ -432,11 +434,11 @@ HeaderLineParser* SipParser::getHeaderlineparser(QString field)
   {
     initHeaderlineparsers();
   }
-  HeaderLineParser* parser = headerlineparsers.value(field);
+  HeaderLineParser* parser = headerlineparsers.value(field.toLower());
   if (parser != NULL)
   {
     qDebug() << "parser not null";
-    return headerlineparsers.value(field);
+    return parser;
   }
   else
   {

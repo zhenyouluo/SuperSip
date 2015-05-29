@@ -64,7 +64,7 @@ int HeaderLineParser_Via::parse(QString fieldvalues, SipMessage* sipmessage)
       if (equalpos > 0)
       {
         QString paramname = via_params[j].left(equalpos).trimmed().toLower();
-        QString paramvalue = via_params[j].left(equalpos).trimmed();
+        QString paramvalue = via_params[j].mid(equalpos+1).trimmed();
         sipvia->addParams(paramname, paramvalue);
       }
     }

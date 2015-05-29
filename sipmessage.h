@@ -23,6 +23,13 @@ public:
   void setSipBody(QString);
   void setSipCallId(QString);
   void setSipURI(SipURI*);
+  void setSipFromUri(SipURI*);
+  void setSipFromDisplayname(QString);
+  void addFromParams(QString, QString);
+  void setSipToUri(SipURI*);
+  void setSipToDisplayname(QString);
+  void addToParams(QString, QString);
+
   QString toString();
   void addVia(SipVia*);
 
@@ -38,6 +45,12 @@ private:
   QString reasonPhrase;
   QString sipMethod;
   SipURI *sipURI;
+  SipURI *fromURI;
+  SipURI *toURI;
+  QHash<QString, QString> fromParameters;
+  QString fromDisplayname;
+  QHash<QString, QString> toParameters;
+  QString toDisplayname;
   QString sipBody;
   QList<SipVia*> sipVias;
   QString sipCallId;

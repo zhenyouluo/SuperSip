@@ -100,3 +100,37 @@ void SipMessage::addToParams(QString name, QString value)
 {
   toParameters.insert(name, value);
 }
+
+void SipMessage::setSipContactUri(SipURI* uri)
+{
+  contactURI = uri;
+}
+
+void SipMessage::setSipContactDisplayname(QString display)
+{
+  contactDisplayname = display;
+}
+
+void SipMessage::addContactParams(QString name, QString value)
+{
+  contactParameters.insert(name, value);
+}
+
+void SipMessage::setCseqNr(qlonglong seqnr)
+{
+  cseqNr = seqnr;
+}
+void SipMessage::setExpires(qlonglong expires)
+{
+  expiresSecs = expires;
+}
+
+void SipMessage::setCseqMethod(QString cseqmethod)
+{
+  cseqMethod = cseqmethod;
+}
+
+void SipMessage::setMaxForwards(int forwards)
+{
+  maxForwards = forwards;
+}

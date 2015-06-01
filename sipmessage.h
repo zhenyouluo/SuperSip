@@ -29,6 +29,13 @@ public:
   void setSipToUri(SipURI*);
   void setSipToDisplayname(QString);
   void addToParams(QString, QString);
+  void setSipContactUri(SipURI*);
+  void setSipContactDisplayname(QString);
+  void addContactParams(QString, QString);
+  void setExpires(qlonglong);
+  void setCseqNr(qlonglong);
+  void setCseqMethod(QString);
+  void setMaxForwards(int);
 
   QString toString();
   void addVia(SipVia*);
@@ -49,11 +56,18 @@ private:
   SipURI *toURI;
   QHash<QString, QString> fromParameters;
   QString fromDisplayname;
+  SipURI *contactURI;
+  QHash<QString, QString> contactParameters;
+  QString contactDisplayname;
   QHash<QString, QString> toParameters;
   QString toDisplayname;
   QString sipBody;
   QList<SipVia*> sipVias;
   QString sipCallId;
+  qlonglong cseqNr;
+  qlonglong expiresSecs;
+  QString cseqMethod;
+  int maxForwards;
 
 signals:
 

@@ -11,6 +11,10 @@
 #include "headerlineparser_call_id.h"
 #include "headerlineparser_from.h"
 #include "headerlineparser_via.h"
+#include "headerlineparser_cseq.h"
+#include "headerlineparser_max_forwards.h"
+#include "headerlineparser_contact.h"
+#include "headerlineparser_expires.h"
 
 SipParser::SipParser(QObject *parent) : QObject(parent)
 {
@@ -419,13 +423,17 @@ void SipParser::initHeaderlineparsers()
 {
   headerlineparsers.insert("call-id", new HeaderLineParser_Call_Id());
   headerlineparsers.insert("i", new HeaderLineParser_Call_Id());
-  headerlineparsers.insert("via", new HeaderLineParser_Via());
-  headerlineparsers.insert("v", new HeaderLineParser_Via());
+  headerlineparsers.insert("contact", new HeaderLineParser_Contact());
+  headerlineparsers.insert("m", new HeaderLineParser_Contact());
+  headerlineparsers.insert("cseq", new HeaderLineParser_Cseq());
+  headerlineparsers.insert("expires", new HeaderLineParser_Expires());
   headerlineparsers.insert("from", new HeaderLineParser_From());
   headerlineparsers.insert("f", new HeaderLineParser_From());
-
-
+  headerlineparsers.insert("max-forwards", new HeaderLineParser_Max_Forwards());
   headerlineparsers.insert("to", new HeaderLineParser_To());
+  headerlineparsers.insert("t", new HeaderLineParser_To());
+  headerlineparsers.insert("via", new HeaderLineParser_Via());
+  headerlineparsers.insert("v", new HeaderLineParser_Via());
 }
 
 HeaderLineParser* SipParser::getHeaderlineparser(QString field)

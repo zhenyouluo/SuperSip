@@ -29,7 +29,11 @@ SOURCES += main.cpp \
     headerlineparser_via.cpp \
     sipvia.cpp \
     headerlineparser_call_id.cpp \
-    headerlineparser_from.cpp
+    headerlineparser_from.cpp \
+    headerlineparser_cseq.cpp \
+    headerlineparser_max_forwards.cpp \
+    headerlineparser_contact.cpp \
+    headerlineparser_expires.cpp
 
 HEADERS += \
     networkreaderthread.h \
@@ -45,4 +49,8 @@ HEADERS += \
     headerlineparser_via.h \
     sipvia.h \
     headerlineparser_call_id.h \
-    headerlineparser_from.h
+    headerlineparser_from.h \
+    headerlineparser_cseq.h \
+    headerlineparser_max_forwards.h \
+    headerlineparser_contact.h \
+    headerlineparser_expires.h

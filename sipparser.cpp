@@ -15,6 +15,7 @@
 #include "headerlineparser_max_forwards.h"
 #include "headerlineparser_contact.h"
 #include "headerlineparser_expires.h"
+#include "headerlineparser_content_length.h"
 
 SipParser::SipParser(QObject *parent) : QObject(parent)
 {
@@ -425,6 +426,8 @@ void SipParser::initHeaderlineparsers()
   headerlineparsers.insert("i", new HeaderLineParser_Call_Id());
   headerlineparsers.insert("contact", new HeaderLineParser_Contact());
   headerlineparsers.insert("m", new HeaderLineParser_Contact());
+  headerlineparsers.insert("content-length", new HeaderLineParser_Content_Length());
+  headerlineparsers.insert("l", new HeaderLineParser_Content_Length());
   headerlineparsers.insert("cseq", new HeaderLineParser_Cseq());
   headerlineparsers.insert("expires", new HeaderLineParser_Expires());
   headerlineparsers.insert("from", new HeaderLineParser_From());

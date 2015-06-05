@@ -34,6 +34,7 @@ public:
   void addContactParams(QString, QString);
   void setExpires(qlonglong);
   void setCseqNr(qlonglong);
+  void setContentLenght(qlonglong);
   void setCseqMethod(QString);
   void setMaxForwards(int);
 
@@ -66,6 +67,7 @@ private:
   QString sipCallId;
   qlonglong cseqNr;
   qlonglong expiresSecs;
+  qlonglong contentLength;
   QString cseqMethod;
   int maxForwards;
 

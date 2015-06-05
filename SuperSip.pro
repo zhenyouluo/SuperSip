@@ -33,7 +33,9 @@ SOURCES += main.cpp \
     headerlineparser_cseq.cpp \
     headerlineparser_max_forwards.cpp \
     headerlineparser_contact.cpp \
-    headerlineparser_expires.cpp
+    headerlineparser_expires.cpp \
+    headerlineparser_content_length.cpp \
+    appsettings.cpp
 
 HEADERS += \
     networkreaderthread.h \
@@ -53,4 +55,8 @@ HEADERS += \
     headerlineparser_cseq.h \
     headerlineparser_max_forwards.h \
     headerlineparser_contact.h \
-    headerlineparser_expires.h
+    headerlineparser_expires.h \
+    headerlineparser_content_length.h \
+    appsettings.h
+
+include(../QtWebApp/httpserver/httpserver.pri)

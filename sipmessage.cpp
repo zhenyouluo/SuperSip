@@ -120,6 +120,12 @@ void SipMessage::setCseqNr(qlonglong seqnr)
 {
   cseqNr = seqnr;
 }
+
+void SipMessage::setContentLenght(qlonglong length)
+{
+  contentLength = length;
+}
+
 void SipMessage::setExpires(qlonglong expires)
 {
   expiresSecs = expires;

@@ -59,4 +59,4 @@ HEADERS += \
     headerlineparser_content_length.h \
     appsettings.h
 
-include(../QtWebApp/httpserver/httpserver.pri)
+include(./QtWebApp/httpserver/httpserver.pri)

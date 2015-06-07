@@ -12,6 +12,7 @@ public:
   static QSettings* httpSettings;
   static QSettings* sessionSettings;
   static QSettings* appSettings;
+  static QSettings* sipSettings;
   static void initialize();
 signals:
 

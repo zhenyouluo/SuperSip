@@ -50,7 +50,7 @@ public:
       @param requestHandler Processes each received HTTP request, usually by dispatching to controller classes.
       @param parent Parent object.
     */
-    HttpListener(QSettings* settings, HttpRequestHandler* requestHandler, QObject* parent = 0);
+    HttpListener(QSettings* settings, int port, HttpRequestHandler* requestHandler, QObject* parent = 0);
 
     /** Destructor */
     virtual ~HttpListener();

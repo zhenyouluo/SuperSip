@@ -8,6 +8,7 @@ class NetworkReaderThread : public QThread
 {
   Q_OBJECT
 public:
+  explicit NetworkReaderThread(QObject *parent = 0);
   void run();
 
 private:

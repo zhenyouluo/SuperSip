@@ -13,7 +13,12 @@ void StartpageController::service(HttpRequest &request, HttpResponse &response)
 {
   HttpSession session=RequestMapper::sessionStore->getSession(request,response,true);
 
-  if (session.contains("authenticated"))
+  if (!AppSettings::sipSettings->contains("sipdomain"))
   {
+    todo
+  }
+  else
+  {
+
   }
 }

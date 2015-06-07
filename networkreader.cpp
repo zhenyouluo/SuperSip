@@ -9,7 +9,7 @@
 
 NetworkReader::NetworkReader()
 {
-  udpSocket = new QUdpSocket();
+  udpSocket = new QUdpSocket(this);
   if (udpSocket->bind(QHostAddress::Any, 5060))
   {
     qDebug() << "bound";
@@ -30,7 +30,7 @@ NetworkReader::NetworkReader()
   callHandlingThreads = new QThread*[nrOfCallHandlingThreads];
   for (int i=0; i < nrOfCallHandlingThreads; i++)
   {
-    callHandlingThreads[i] = new QThread();
+    callHandlingThreads[i] = new QThread(this);
     callHandlingThreads[i]->start();
   }
   threadChoser = 0;
@@ -59,9 +59,9 @@ void NetworkReader::readPendingDatagrams()
     }
     else
     {
-      CallInputter* inputter = new CallInputter();
+      CallInputter* inputter = new CallInputter(this);
       calls.insert(callId, inputter);
-      CallHandler* handler = new CallHandler();
+      CallHandler* handler = new CallHandler(this);
       QObject::connect(inputter, &CallInputter::sendCallData, handler, &CallHandler::processCallData);
 
       handler->moveToThread(callHandlingThreads[threadChoser]);

@@ -20,8 +20,9 @@ HEADERS += $$PWD/httpglobal.h \
            $$PWD/httpsessionstore.h \
            $$PWD/staticfilecontroller.h \
     $$PWD/requestmapper.h \
-    $$PWD/startpagecontroller.h \
-    $$PWD/setpasswordcontroller.h
+    $$PWD/logincontroller.h \
+    $$PWD/setpasswordcontroller.h \
+    $$PWD/startpagecontroller.h
 
 SOURCES += $$PWD/httpglobal.cpp \
            $$PWD/httplistener.cpp \
@@ -35,5 +36,6 @@ SOURCES += $$PWD/httpglobal.cpp \
            $$PWD/httpsessionstore.cpp \
            $$PWD/staticfilecontroller.cpp \
     $$PWD/requestmapper.cpp \
-    $$PWD/startpagecontroller.cpp \
-    $$PWD/setpasswordcontroller.cpp
+    $$PWD/logincontroller.cpp \
+    $$PWD/setpasswordcontroller.cpp \
+    $$PWD/startpagecontroller.cpp

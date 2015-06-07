@@ -1,6 +1,7 @@
 #include "requestmapper.h"
 #include "httpsessionstore.h"
 #include "startpagecontroller.h"
+#include "logincontroller.h"
 #include "setpasswordcontroller.h"
 #include "appsettings.h"
 
@@ -13,8 +14,8 @@ RequestMapper::RequestMapper(QObject* parent)
 
 void RequestMapper::service(HttpRequest& request, HttpResponse& response)
 {
-  QByteArray path=request.getPath();
-  QByteArray sessionId=sessionStore->getSessionId(request,response);
+  QByteArray path = request.getPath();
+  HttpSession session=RequestMapper::sessionStore->getSession(request, response, true);
   if (!AppSettings::appSettings->contains("passwordhash"))
   {
     if (path != "/setpassword")
@@ -25,15 +26,22 @@ void RequestMapper::service(HttpRequest& request, HttpResponse& response)
   }
   else
   {
-    if (sessionId.isEmpty() && path != "/login")
+    if (!session.contains("logintime") && path != "/login")
     {
       qDebug("RequestMapper: redirect to login page");
+      session.set("redirected", path);
       response.redirect("/login");
       return;
     }
   }
   qDebug("RequestMapper: path=%s",path.data());
 
+//  if (path == "/restartsipserver")
+//  {
+//    emit restartSipServer();
+//    response.redirect("/");
+//    return;
+//  }
   if (path == "/")
   {
     StartpageController().service(request, response);
@@ -44,7 +52,7 @@ void RequestMapper::service(HttpRequest& request, HttpResponse& response)
   }
   else if (path == "/login")
   {
-        //LoginpageController().service(request, response);
+    LoginController().service(request, response);
   }
   else
   {

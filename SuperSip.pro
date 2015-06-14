@@ -64,3 +64,9 @@ HEADERS += \
     sipserver.h
 
 include(./QtWebApp/httpserver/httpserver.pri)
+
+DISTFILES += \
+    sip.ico
+
+RESOURCES += \
+    resources.qrc

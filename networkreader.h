@@ -11,7 +11,7 @@ class NetworkReader : public QObject
   Q_OBJECT
 public:
   explicit NetworkReader();
-
+  void sendToClient(QHostAddress, quint16, QByteArray);
 
 private:
   QUdpSocket* udpSocket;

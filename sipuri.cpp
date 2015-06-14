@@ -11,6 +11,16 @@ SipURI::SipURI(QObject *parent) : QObject(parent)
   setUriFragment("");
 }
 
+QString SipURI::getUriHost()
+{
+  return uriHost;
+}
+
+QString SipURI::getUriText()
+{
+  return uriText;
+}
+
 void SipURI::setUriText(QString uritext)
 {
   uriText = uritext;

@@ -60,9 +60,11 @@ void NetworkReader::readPendingDatagrams()
     else
     {
       CallInputter* inputter = new CallInputter(this);
+      inputter->setClientIp(sender, senderPort);
       calls.insert(callId, inputter);
-      CallHandler* handler = new CallHandler(this);
+      CallHandler* handler = new CallHandler(); // call delete_later via slot?
       QObject::connect(inputter, &CallInputter::sendCallData, handler, &CallHandler::processCallData);
+      QObject::connect(handler, &CallHandler::sendResponse, inputter, &CallInputter::responseToClient);
 
       handler->moveToThread(callHandlingThreads[threadChoser]);
 
@@ -72,5 +74,10 @@ void NetworkReader::readPendingDatagrams()
       inputter->forwardCallData(datagram);
     }
   }
+}
+
+void NetworkReader::sendToClient(QHostAddress sender, quint16 senderport, QByteArray response)
+{
+  udpSocket->writeDatagram(response, sender, senderport);
 }
 

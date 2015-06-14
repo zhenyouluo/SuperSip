@@ -54,6 +54,17 @@ void RequestMapper::service(HttpRequest& request, HttpResponse& response)
   {
     LoginController().service(request, response);
   }
+  else if (path == "/favicon.ico")
+  {
+    QFile file(":/sip.ico");
+    if (file.open(QIODevice::ReadOnly))
+    {
+      QByteArray blob = file.readAll();
+      response.setHeader("Content-Type", "image/x-icon");
+      response.setHeader("Content-length", blob.length());
+      response.write(blob);
+    }
+  }
   else
   {
     response.setStatus(404,"Not found");

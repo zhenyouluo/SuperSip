@@ -20,6 +20,8 @@ private:
   QString uriFragment;
 
 public:
+  QString getUriHost();
+  QString getUriText();
   void setUriText(QString);
   void setUriScheme(QString);
   void setUriUserinfo(QString);

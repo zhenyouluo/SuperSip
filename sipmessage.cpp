@@ -1,3 +1,6 @@
+#include <QHash>
+#include <QString>
+
 #include "sipmessage.h"
 #include "sipuri.h"
 
@@ -6,9 +9,83 @@ SipMessage::SipMessage(QObject *parent) : QObject(parent)
 
 }
 
-bool SipMessage::addField(QString fieldname, QString fieldvalue)
+//
+// To be called with the requestmessage as the parent of the responsemessage
+// Deleting the requestmessage will automatically delete the responsemessage!
+//
+SipMessage::SipMessage(int returncode, QObject *parent) : QObject(parent)
 {
+  isRequest = false;
+  returnCode = returncode;
+}
 
+//
+// Request and response message will share some data
+//
+void SipMessage::copyFromRequest(SipMessage* requestmessage)
+{
+  // copy from request message to response message
+  sipCallId = requestmessage->getSipCallId();
+  cseqNr = requestmessage->getCseqNr();
+  fromParameters = requestmessage->getFromParams();
+  fromDisplayname = requestmessage->getSipFromDisplayname();
+  toParameters = requestmessage->getToParams();
+  toDisplayname = requestmessage->getSipToDisplayname();
+  sipVias = requestmessage->getSipVias();
+  fromURI = requestmessage->getSipFromUri();
+  toURI = requestmessage->getSipToUri();
+  // TODO copy require parameters
+
+}
+
+SipURI* SipMessage::getSipUri()
+{
+  return sipURI;
+}
+
+QString SipMessage::getSipCallId()
+{
+  return sipCallId;
+}
+
+qlonglong SipMessage::getCseqNr()
+{
+  return cseqNr;
+}
+
+SipURI* SipMessage::getSipToUri()
+{
+  return toURI;
+}
+
+QHash<QString, QString> SipMessage::getFromParams()
+{
+  return fromParameters;
+}
+
+QHash<QString, QString> SipMessage::getToParams()
+{
+  return toParameters;
+}
+
+QString SipMessage::getSipFromDisplayname()
+{
+  return fromDisplayname;
+}
+
+QString SipMessage::getSipToDisplayname()
+{
+  return toDisplayname;
+}
+
+QList<SipVia*> SipMessage::getSipVias()
+{
+  return sipVias;
+}
+
+SipURI* SipMessage::getSipFromUri()
+{
+  return fromURI;
 }
 
 void SipMessage::setIsRequest(bool isrequest)
@@ -140,3 +217,24 @@ void SipMessage::setMaxForwards(int forwards)
 {
   maxForwards = forwards;
 }
+
+void SipMessage::setWWW_AuthenticateNonce(QByteArray nonce)
+{
+  wwwAuthNonce = nonce;
+}
+
+void SipMessage::setWWW_AuthenticateRealm(QString realm)
+{
+  wwwAuthRealm = realm;
+}
+
+void SipMessage::setWWW_Authenticate(QByteArray opaque)
+{
+  wwwAuthOpaque = opaque;
+}
+
+QByteArray SipMessage::toBytes()
+{
+
+}
+

@@ -14,8 +14,20 @@ class SipMessage : public QObject
   Q_OBJECT
 public:
   explicit SipMessage(QObject *parent = 0);
-  bool addField(QString, QString);
+  explicit SipMessage(int, QObject *parent = 0);
+  void copyFromRequest(SipMessage*);
   void setIsRequest(bool);
+  SipURI* getSipUri();
+  QString getSipCallId();
+  qlonglong getCseqNr();
+  QHash<QString, QString> getFromParams();
+  QHash<QString, QString> getToParams();
+  QString getSipFromDisplayname();
+  QString getSipToDisplayname();
+  QList<SipVia*> getSipVias();
+  SipURI* getSipToUri();
+  SipURI* getSipFromUri();
+
   void setSipVersion(QString);
   void setStatusCode(QString);
   void setReasonPhrase(QString);
@@ -37,6 +49,10 @@ public:
   void setContentLenght(qlonglong);
   void setCseqMethod(QString);
   void setMaxForwards(int);
+  void setWWW_AuthenticateNonce(QByteArray nonce);
+  void setWWW_AuthenticateRealm(QString realm);
+  void setWWW_Authenticate(QByteArray opaque);
+  QByteArray toBytes();
 
   QString toString();
   void addVia(SipVia*);
@@ -70,6 +86,10 @@ private:
   qlonglong contentLength;
   QString cseqMethod;
   int maxForwards;
+  QByteArray wwwAuthNonce;
+  QByteArray wwwAuthOpaque;
+  QString wwwAuthRealm;
+  int returnCode;
 
 signals:
 

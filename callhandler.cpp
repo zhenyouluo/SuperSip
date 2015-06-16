@@ -21,7 +21,7 @@ CallHandler::CallHandler(QObject *parent) : QObject(parent)
 
 }
 
-void CallHandler::processCallData(QByteArray callData)
+void CallHandler::processCallData(QByteArray callData, QHostAddress sender)
 {
   //qDebug() << callData;
   SipMessage* sipmessage = new SipMessage(this);
@@ -69,7 +69,7 @@ void CallHandler::processCallData(QByteArray callData)
               // Send challenge
               //
 
-              SipMessage responseMessage(401, sipmessage);
+              SipMessage responseMessage(401, sender, sipmessage);
               responseMessage.copyFromRequest(sipmessage);
 
               qint64 timestamp = QDateTime::currentMSecsSinceEpoch();

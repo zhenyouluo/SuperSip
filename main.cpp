@@ -14,6 +14,8 @@ int main(int argc, char *argv[])
 
   AppSettings::initialize();
 
+  qRegisterMetaType<QHostAddress>("QHostAddress");
+
   bool portfromcommandline = false;
   int port;
   if (argc > 1)

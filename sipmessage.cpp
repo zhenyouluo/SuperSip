@@ -13,10 +13,11 @@ SipMessage::SipMessage(QObject *parent) : QObject(parent)
 // To be called with the requestmessage as the parent of the responsemessage
 // Deleting the requestmessage will automatically delete the responsemessage!
 //
-SipMessage::SipMessage(int returncode, QObject *parent) : QObject(parent)
+SipMessage::SipMessage(int returncode, QHostAddress sender, QObject *parent) : QObject(parent)
 {
   isRequest = false;
   returnCode = returncode;
+  senderIP = sender;
 }
 
 //
@@ -235,6 +236,56 @@ void SipMessage::setWWW_Authenticate(QByteArray opaque)
 
 QByteArray SipMessage::toBytes()
 {
+  QByteArray txt("SIP/2.0");
+  if (returnCode == 401)
+  {
+    txt.append(" 401 Unauthorized\n");
+  }
 
+  // add the via line(s)
+  for (int i=0; i < sipVias.size(); i++)
+  {
+    txt.append(sipVias[i]->toBytes()).append("\n");
+  }
+
+  // add sender ip
+  txt.append(" ;received=").append(senderIP.toString()).append("\n");
+
+  txt.append("To: ").append(toURI->getUriText());
+  QHashIterator<QString, QString> i(toParameters);
+  while (i.hasNext())
+  {
+    i.next();
+    txt.append(";").append(i.key());
+    txt.append("=").append(i.value());
+  }
+  txt.append(";tag=2493k59kd\n"); //TODO
+
+  txt.append("From: ").append(fromURI->getUriText());
+  QHashIterator<QString, QString> j(fromParameters);
+  while (j.hasNext())
+  {
+    j.next();
+    txt.append(";").append(j.key());
+    txt.append("=").append(j.value());
+  }
+  txt.append("\n");
+
+  txt.append("Call-ID: ").append(sipCallId).append("\n");
+
+  txt.append("CSeq: ").append(cseqNr);
+  txt.append(" ").append(sipMethod).append("\n");
+
+  if (returnCode == 401)
+  {
+    txt.append("WWW-Authenticate: Digest\n");
+    txt.append(" realm=\"").append(wwwAuthRealm).append("\",\n");
+    txt.append(" qop=\"auth,auth-int\",\n");
+    txt.append(" nonce=\"").append(wwwAuthNonce).append("\",\n");
+    txt.append(" opaque=\"").append(wwwAuthOpaque).append("\",\n");
+  }
+  txt.append("\n");
+  qDebug() << txt;
+  return txt;
 }
 

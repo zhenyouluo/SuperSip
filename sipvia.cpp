@@ -34,3 +34,21 @@ void SipVia::addParams(QString name, QString value)
 {
   viaParams.insert(name, value);
 }
+
+QByteArray SipVia::toBytes()
+{
+  QByteArray txt("Via ");
+  txt.append(viaProtocolName);
+  txt.append("/").append(viaProtocolVersion);
+  txt.append("/").append(viaTransport);
+  txt.append(" ").append(viaHost);
+  txt.append(":").append(QString::number(viaPort));
+  QHashIterator<QString, QString> i(viaParams);
+  while (i.hasNext())
+  {
+    i.next();
+    txt.append(";").append(i.key());
+    txt.append("=").append(i.value());
+  }
+  return txt.append("\n");
+}

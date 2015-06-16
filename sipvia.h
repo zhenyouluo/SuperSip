@@ -15,6 +15,7 @@ public:
   void setProtocolVersion(QString);
   void setTransport(QString);
   void addParams(QString, QString);
+  QByteArray toBytes();
 
 private:
   QString viaHost;

@@ -55,7 +55,7 @@ void NetworkReader::readPendingDatagrams()
     // otherwise create a new object
     if (calls.contains(callId))
     {
-      calls.value(callId)->forwardCallData(datagram);
+      calls.value(callId)->forwardCallData(datagram, sender);
     }
     else
     {
@@ -71,7 +71,7 @@ void NetworkReader::readPendingDatagrams()
       // call handling threads are selected round robin
       threadChoser = (threadChoser + 1) % nrOfCallHandlingThreads;
 
-      inputter->forwardCallData(datagram);
+      inputter->forwardCallData(datagram, sender);
     }
   }
 }

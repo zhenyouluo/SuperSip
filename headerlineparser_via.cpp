@@ -35,7 +35,7 @@ int HeaderLineParser_Via::parse(QString fieldvalues, SipMessage* sipmessage)
     SipVia* sipvia = new SipVia(sipmessage);
     sipvia->setProtocolName(protocolparts[0].trimmed());
     sipvia->setProtocolVersion(protocolparts[1].trimmed());
-    sipvia->setTransport(protocolparts[1].trimmed());
+    sipvia->setTransport(protocolparts[2].trimmed());
 
     QStringList via_params = via_parm_list[i].mid(lwspos).trimmed().split(";");
     QString send_by = via_params[0];

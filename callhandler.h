@@ -2,6 +2,7 @@
 #define CALLHANDLER_H
 
 #include <QObject>
+#include <QHostAddress>
 
 class CallHandler : public QObject
 {
@@ -18,7 +19,7 @@ signals:
   void sendResponse(QByteArray);
 
 public slots:
-  void processCallData(QByteArray);
+  void processCallData(QByteArray, QHostAddress);
 };
 
 #endif // CALLHANDLER_H

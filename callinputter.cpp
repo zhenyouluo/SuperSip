@@ -6,9 +6,9 @@ CallInputter::CallInputter(QObject *parent) : QObject(parent)
   networkreader = (NetworkReader *) parent;
 }
 
-void CallInputter::forwardCallData(QByteArray callData)
+void CallInputter::forwardCallData(QByteArray callData, QHostAddress sender)
 {
-  emit sendCallData(callData);
+  emit sendCallData(callData, sender);
 }
 
 void CallInputter::responseToClient(QByteArray responsedata)

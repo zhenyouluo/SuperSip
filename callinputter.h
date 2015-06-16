@@ -17,11 +17,11 @@ private:
 
 public:
   explicit CallInputter(QObject *parent = 0);
-  void forwardCallData(QByteArray);
+  void forwardCallData(QByteArray, QHostAddress);
   void setClientIp(QHostAddress, quint16);
 
 signals:
-  void sendCallData(QByteArray);
+  void sendCallData(QByteArray, QHostAddress);
 
 public slots:
   void responseToClient(QByteArray);

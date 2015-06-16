@@ -5,6 +5,7 @@
 #include <QHash>
 #include <QString>
 #include <QStringList>
+#include <QHostAddress>
 
 #include "sipuri.h"
 #include "sipvia.h"
@@ -14,7 +15,7 @@ class SipMessage : public QObject
   Q_OBJECT
 public:
   explicit SipMessage(QObject *parent = 0);
-  explicit SipMessage(int, QObject *parent = 0);
+  explicit SipMessage(int, QHostAddress, QObject *parent = 0);
   void copyFromRequest(SipMessage*);
   void setIsRequest(bool);
   SipURI* getSipUri();
@@ -61,7 +62,7 @@ public:
   QString getSipMethod();
 
 private:
-  QHash<QString, QStringList> fields;
+  QHostAddress senderIP;
   QByteArray body;
   bool isRequest;
   QString sipVersion;

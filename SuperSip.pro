@@ -37,7 +37,8 @@ SOURCES += main.cpp \
     headerlineparser_content_length.cpp \
     appsettings.cpp \
     database.cpp \
-    sipserver.cpp
+    sipserver.cpp \
+    sipadress.cpp
 
 HEADERS += \
     networkreaderthread.h \
@@ -61,7 +62,8 @@ HEADERS += \
     headerlineparser_content_length.h \
     appsettings.h \
     database.h \
-    sipserver.h
+    sipserver.h \
+    sipadress.h
 
 include(./QtWebApp/httpserver/httpserver.pri)
 

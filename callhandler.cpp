@@ -23,11 +23,11 @@ CallHandler::CallHandler(QObject *parent) : QObject(parent)
 
 void CallHandler::processCallData(QByteArray callData, QHostAddress sender)
 {
-  //qDebug() << callData;
+  qDebug() << callData;
   SipMessage* sipmessage = new SipMessage(this);
   if (SipParser::parse(callData, sipmessage) == 0)
   {
-    qDebug() << callData;
+    //qDebug() << callData;
     if (sipmessage->getIsRequest())
     {
       switch(SipDefinitions::sipMethods.indexOf(sipmessage->getSipMethod()))
@@ -87,7 +87,7 @@ void CallHandler::processCallData(QByteArray callData, QHostAddress sender)
               }
               responseMessage.setWWW_AuthenticateNonce(nonce);
               responseMessage.setWWW_AuthenticateRealm(domain);
-              responseMessage.setWWW_Authenticate(opaque);
+              responseMessage.setWWW_Authenticate(opaque.toBase64());
               emit sendResponse(responseMessage.toBytes());
     //      }
 

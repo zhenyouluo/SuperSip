@@ -7,6 +7,7 @@
 #include <QSet>
 #include "sipmessage.h"
 #include "sipuri.h"
+#include "sipadress.h"
 #include "headerlineparser.h"
 
 class SipParser : public QObject
@@ -27,6 +28,7 @@ public:
   static void splitBy(QString, QChar, QStringList*);
   static int findFirstLiteral(QString, QChar);
   static int findLWS(QString);
+  static int parseSipAdress(QString, SipAdress*);
 
 signals:
 

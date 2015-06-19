@@ -420,6 +420,76 @@ int SipParser::parseHeader(QStringList sipheader, SipMessage* sipmessage)
   return 0;
 }
 
+int SipParser::parseSipAdress(QString text_to_parse, SipAdress* sip_address)
+{
+  sip_address->setText(text_to_parse);
+  int laquotpos = SipParser::findFirstLiteral(text_to_parse, '<');
+  int raquotpos = SipParser::findFirstLiteral(text_to_parse, '>');
+  qDebug() << laquotpos << raquotpos;
+  QString addrspec;
+  int semipos;
+
+  if ((laquotpos >= 0)  && (raquotpos > 0) && (laquotpos < raquotpos))
+  {
+    // name-addr form, see rfc
+    sip_address->setDisplayname(text_to_parse.left(laquotpos));
+    addrspec = text_to_parse.mid(laquotpos+1, raquotpos-(laquotpos+1));
+    semipos = SipParser::findFirstLiteral(text_to_parse.mid(raquotpos+1), ';');
+
+  }
+  else
+  {
+    // addr-spec form, see rfc
+    sip_address ->setDisplayname("");
+    semipos = SipParser::findFirstLiteral(text_to_parse, ';');
+    if (semipos < 0)
+    {
+      addrspec = text_to_parse;
+    }
+    else
+    {
+      addrspec = text_to_parse.left(semipos);
+    }
+  }
+  if (parseSipURI(addrspec, sip_address->getUri()) != 0)
+  {
+    qDebug() << "4";
+    return 4;
+  }
+      qDebug() << "as: "<< addrspec;
+  while (semipos > 0)
+  {
+    int start = semipos+1;
+
+    // find next semicolon
+    semipos = SipParser::findFirstLiteral(text_to_parse.mid(start), ';');
+    int end;
+    if (semipos > 0)
+    {
+      end = semipos;
+    }
+    else
+    {
+      end = text_to_parse.size();
+    }
+    QString paramstr = text_to_parse.mid(start, end-start);
+    int equalpos = paramstr.indexOf('=');
+    QString paramname;
+    QString paramvalue = "";
+    if (equalpos > 0)
+    {
+      paramname = paramstr.left(equalpos).trimmed().toLower();
+      paramvalue = paramstr.mid(equalpos+1).trimmed();
+    }
+    else
+    {
+      paramname = paramstr.trimmed().toLower();;
+    }
+    sip_address->addParams(paramname, paramvalue);
+  }
+  return 0;
+}
+
 void SipParser::initHeaderlineparsers()
 {
   headerlineparsers.insert("call-id", new HeaderLineParser_Call_Id());

@@ -6,7 +6,7 @@
 
 SipMessage::SipMessage(QObject *parent) : QObject(parent)
 {
-
+  contactAll = false;
 }
 
 //
@@ -18,6 +18,7 @@ SipMessage::SipMessage(int returncode, QHostAddress sender, QObject *parent) : Q
   isRequest = false;
   returnCode = returncode;
   senderIP = sender;
+  contactAll = false;
 }
 
 //
@@ -26,15 +27,13 @@ SipMessage::SipMessage(int returncode, QHostAddress sender, QObject *parent) : Q
 void SipMessage::copyFromRequest(SipMessage* requestmessage)
 {
   // copy from request message to response message
+  sipMethod = requestmessage->getSipMethod();
   sipCallId = requestmessage->getSipCallId();
   cseqNr = requestmessage->getCseqNr();
-  fromParameters = requestmessage->getFromParams();
-  fromDisplayname = requestmessage->getSipFromDisplayname();
-  toParameters = requestmessage->getToParams();
-  toDisplayname = requestmessage->getSipToDisplayname();
+  sipContactAdresses = requestmessage->getContactAdresses();
+  sipToAdress = requestmessage->getToAdress();
+  sipFromAdress = requestmessage->getFromAdress();
   sipVias = requestmessage->getSipVias();
-  fromURI = requestmessage->getSipFromUri();
-  toURI = requestmessage->getSipToUri();
   // TODO copy require parameters
 
 }
@@ -54,39 +53,9 @@ qlonglong SipMessage::getCseqNr()
   return cseqNr;
 }
 
-SipURI* SipMessage::getSipToUri()
-{
-  return toURI;
-}
-
-QHash<QString, QString> SipMessage::getFromParams()
-{
-  return fromParameters;
-}
-
-QHash<QString, QString> SipMessage::getToParams()
-{
-  return toParameters;
-}
-
-QString SipMessage::getSipFromDisplayname()
-{
-  return fromDisplayname;
-}
-
-QString SipMessage::getSipToDisplayname()
-{
-  return toDisplayname;
-}
-
 QList<SipVia*> SipMessage::getSipVias()
 {
   return sipVias;
-}
-
-SipURI* SipMessage::getSipFromUri()
-{
-  return fromURI;
 }
 
 void SipMessage::setIsRequest(bool isrequest)
@@ -149,51 +118,6 @@ void SipMessage::addVia(SipVia* sipvia)
   sipVias.append(sipvia);
 }
 
-void SipMessage::setSipFromUri(SipURI* uri)
-{
-  fromURI = uri;
-}
-
-void SipMessage::setSipFromDisplayname(QString display)
-{
-  fromDisplayname = display;
-}
-
-void SipMessage::addFromParams(QString name, QString value)
-{
-  fromParameters.insert(name, value);
-}
-
-void SipMessage::setSipToUri(SipURI* uri)
-{
-  toURI = uri;
-}
-
-void SipMessage::setSipToDisplayname(QString display)
-{
-  toDisplayname = display;
-}
-
-void SipMessage::addToParams(QString name, QString value)
-{
-  toParameters.insert(name, value);
-}
-
-void SipMessage::setSipContactUri(SipURI* uri)
-{
-  contactURI = uri;
-}
-
-void SipMessage::setSipContactDisplayname(QString display)
-{
-  contactDisplayname = display;
-}
-
-void SipMessage::addContactParams(QString name, QString value)
-{
-  contactParameters.insert(name, value);
-}
-
 void SipMessage::setCseqNr(qlonglong seqnr)
 {
   cseqNr = seqnr;
@@ -232,6 +156,41 @@ void SipMessage::setWWW_AuthenticateRealm(QString realm)
 void SipMessage::setWWW_Authenticate(QByteArray opaque)
 {
   wwwAuthOpaque = opaque;
+}
+
+void SipMessage::setContactAll(bool contactall)
+{
+  contactAll = contactall;
+}
+
+void SipMessage::addContactAdress(SipAdress* adress)
+{
+  sipContactAdresses.append(adress);
+}
+
+void SipMessage::setFromAdress(SipAdress* adress)
+{
+  sipFromAdress = adress;
+}
+
+void SipMessage::setToAdress(SipAdress* adress)
+{
+  sipToAdress = adress;
+}
+
+SipAdress* SipMessage::getToAdress()
+{
+  return sipToAdress;
+}
+
+SipAdress* SipMessage::getFromAdress()
+{
+  return sipFromAdress;
+}
+
+QList<SipAdress*> SipMessage::getContactAdresses()
+{
+  return sipContactAdresses;
 }
 
 QByteArray SipMessage::toBytes()
@@ -273,7 +232,7 @@ QByteArray SipMessage::toBytes()
 
   txt.append("Call-ID: ").append(sipCallId).append("\n");
 
-  txt.append("CSeq: ").append(cseqNr);
+  txt.append("CSeq: ").append(QString::number(cseqNr));
   txt.append(" ").append(sipMethod).append("\n");
 
   if (returnCode == 401)
@@ -282,7 +241,7 @@ QByteArray SipMessage::toBytes()
     txt.append(" realm=\"").append(wwwAuthRealm).append("\",\n");
     txt.append(" qop=\"auth,auth-int\",\n");
     txt.append(" nonce=\"").append(wwwAuthNonce).append("\",\n");
-    txt.append(" opaque=\"").append(wwwAuthOpaque).append("\",\n");
+    txt.append(" opaque=\"").append(wwwAuthOpaque).append("\"\n");
   }
   txt.append("\n");
   qDebug() << txt;

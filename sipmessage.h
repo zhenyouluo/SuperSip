@@ -9,6 +9,7 @@
 
 #include "sipuri.h"
 #include "sipvia.h"
+#include "sipadress.h"
 
 class SipMessage : public QObject
 {
@@ -21,13 +22,7 @@ public:
   SipURI* getSipUri();
   QString getSipCallId();
   qlonglong getCseqNr();
-  QHash<QString, QString> getFromParams();
-  QHash<QString, QString> getToParams();
-  QString getSipFromDisplayname();
-  QString getSipToDisplayname();
   QList<SipVia*> getSipVias();
-  SipURI* getSipToUri();
-  SipURI* getSipFromUri();
 
   void setSipVersion(QString);
   void setStatusCode(QString);
@@ -36,15 +31,6 @@ public:
   void setSipBody(QString);
   void setSipCallId(QString);
   void setSipURI(SipURI*);
-  void setSipFromUri(SipURI*);
-  void setSipFromDisplayname(QString);
-  void addFromParams(QString, QString);
-  void setSipToUri(SipURI*);
-  void setSipToDisplayname(QString);
-  void addToParams(QString, QString);
-  void setSipContactUri(SipURI*);
-  void setSipContactDisplayname(QString);
-  void addContactParams(QString, QString);
   void setExpires(qlonglong);
   void setCseqNr(qlonglong);
   void setContentLenght(qlonglong);
@@ -53,6 +39,13 @@ public:
   void setWWW_AuthenticateNonce(QByteArray nonce);
   void setWWW_AuthenticateRealm(QString realm);
   void setWWW_Authenticate(QByteArray opaque);
+  void setContactAll(bool);
+  void addContactAdress(SipAdress*);
+  void setToAdress(SipAdress*);
+  void setFromAdress(SipAdress*);
+  SipAdress* getToAdress();
+  SipAdress* getFromAdress();
+  QList<SipAdress*> getContactAdresses();
   QByteArray toBytes();
 
   QString toString();
@@ -62,6 +55,7 @@ public:
   QString getSipMethod();
 
 private:
+  bool contactAll;
   QHostAddress senderIP;
   QByteArray body;
   bool isRequest;
@@ -70,17 +64,9 @@ private:
   QString reasonPhrase;
   QString sipMethod;
   SipURI *sipURI;
-  SipURI *fromURI;
-  SipURI *toURI;
-  QHash<QString, QString> fromParameters;
-  QString fromDisplayname;
-  SipURI *contactURI;
-  QHash<QString, QString> contactParameters;
-  QString contactDisplayname;
-  QHash<QString, QString> toParameters;
-  QString toDisplayname;
   QString sipBody;
   QList<SipVia*> sipVias;
+  QList<SipAdress*> sipContactAdresses;
   QString sipCallId;
   qlonglong cseqNr;
   qlonglong expiresSecs;
@@ -91,6 +77,8 @@ private:
   QByteArray wwwAuthOpaque;
   QString wwwAuthRealm;
   int returnCode;
+  SipAdress* sipToAdress;
+  SipAdress* sipFromAdress;
 
 signals:
 

@@ -37,7 +37,7 @@ void SipVia::addParams(QString name, QString value)
 
 QByteArray SipVia::toBytes()
 {
-  QByteArray txt("Via ");
+  QByteArray txt("Via: ");
   txt.append(viaProtocolName);
   txt.append("/").append(viaProtocolVersion);
   txt.append("/").append(viaTransport);
@@ -48,7 +48,10 @@ QByteArray SipVia::toBytes()
   {
     i.next();
     txt.append(";").append(i.key());
-    txt.append("=").append(i.value());
+    if (i.value() != "")
+    {
+      txt.append("=").append(i.value());
+    }
   }
-  return txt.append("\n");
+  return txt;
 }

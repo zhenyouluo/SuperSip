@@ -2,6 +2,7 @@
 #define SIPURI_H
 
 #include <QObject>
+#include <QHash>
 
 class SipURI : public QObject
 {
@@ -18,6 +19,7 @@ private:
   QString uriPath;
   QString uriQuery;
   QString uriFragment;
+  QHash<QString, QString> uriParameters;
 
 public:
   QString getUriHost();
@@ -30,6 +32,7 @@ public:
   void setUriPath(QString);
   void setUriQuery(QString);
   void setUriFragment(QString);
+  void addParams(QString, QString);
   QString toString();
 
 signals:

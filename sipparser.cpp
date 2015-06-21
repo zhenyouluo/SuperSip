@@ -209,6 +209,30 @@ int SipParser::parseSipURI(QString uritext, SipURI* sipuri)
     }
   }
   QString hostport;
+
+  // split on ; to find parameters
+  QStringList serverparts = server.split(";");
+  server = serverparts[0];
+
+  // parameters
+  for (int i = 0; i < serverparts.size(); ++i)
+  {
+    int equalpos = serverparts[0].indexOf('=');
+    QString paramname;
+    QString paramvalue = "";
+    if (equalpos > 0)
+    {
+      paramname = serverparts[0].left(equalpos).trimmed().toLower();
+      paramvalue = serverparts[0].mid(equalpos+1).trimmed();
+    }
+    else
+    {
+      paramname = serverparts[0].trimmed().toLower();;
+    }
+    sipuri->addParams(paramname, paramvalue);
+  }
+
+  // hostport
   int atpos = server.indexOf('@');
   if (atpos < 0)
   {

@@ -14,12 +14,15 @@ private:
   QString displayName;
   SipURI* adressURI;
   QHash<QString, QString> adressParameters;
+  QString adressText;
 
 public:
   explicit SipAdress(QObject *parent = 0);
   void setDisplayname(QString);
   SipURI* getUri();
   void addParams(QString, QString);
+  void setText(QString);
+  QString getText();
 
 signals:
 

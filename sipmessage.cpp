@@ -204,31 +204,16 @@ QByteArray SipMessage::toBytes()
   // add the via line(s)
   for (int i=0; i < sipVias.size(); i++)
   {
-    txt.append(sipVias[i]->toBytes()).append("\n");
+    txt.append(sipVias[i]->toBytes());
   }
 
   // add sender ip
-  txt.append(" ;received=").append(senderIP.toString()).append("\n");
+  txt.append(";received=").append(senderIP.toString()).append("\n");
 
-  txt.append("To: ").append(toURI->getUriText());
-  QHashIterator<QString, QString> i(toParameters);
-  while (i.hasNext())
-  {
-    i.next();
-    txt.append(";").append(i.key());
-    txt.append("=").append(i.value());
-  }
-  txt.append(";tag=2493k59kd\n"); //TODO
+  txt.append("To: ").append(sipToAdress->getText()).append("\n");
+  txt.append(" ;tag=2493k59kd\n"); //TODO
 
-  txt.append("From: ").append(fromURI->getUriText());
-  QHashIterator<QString, QString> j(fromParameters);
-  while (j.hasNext())
-  {
-    j.next();
-    txt.append(";").append(j.key());
-    txt.append("=").append(j.value());
-  }
-  txt.append("\n");
+  txt.append("From: ").append(sipFromAdress->getText().append("\n"));
 
   txt.append("Call-ID: ").append(sipCallId).append("\n");
 

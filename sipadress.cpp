@@ -19,3 +19,13 @@ SipURI* SipAdress::getUri()
 {
   return adressURI;
 }
+
+void SipAdress::setText(QString text)
+{
+  adressText = text;
+}
+
+QString SipAdress::getText()
+{
+  return adressText;
+}

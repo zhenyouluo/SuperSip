@@ -50,7 +50,7 @@ void CallHandler::processCallData(QByteArray callData, QHostAddress sender)
           if (domain != QString(AppSettings::sipSettings->value("sipdomain").toByteArray()).toLower())
           {
             // TODO
-
+            qDebug() << domain <<" Domain NOK " << QString(AppSettings::sipSettings->value("sipdomain").toByteArray()).toLower();
             return;
           }
           qDebug() << "Domain OK";

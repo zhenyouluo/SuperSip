@@ -61,6 +61,11 @@ void SipURI::setUriFragment(QString urifragment)
   uriFragment = urifragment;
 }
 
+void SipURI::addParams(QString paramname, QString paramvalue)
+{
+  uriParameters.insert(paramname, paramvalue);
+}
+
 QString SipURI::toString()
 {
   return "s: "+uriScheme+" u: "+uriUserinfo+" h: "+uriHost+uriPort+uriPath;
